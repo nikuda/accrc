@@ -24,7 +24,7 @@ module SessionType = struct
 end
 
 module Track = struct
-  type name =
+  type t =
     | Monza of int
     | Zolder of int
     | BrandsHatch of int
@@ -72,9 +72,9 @@ module Track = struct
     | "laguna_seca_2019" -> LagunaSeca 2019
     | _ -> failwith ("Unknown track name: " ^ str)
 
-  let to_string name =
-    let n, y =
-      match name with
+  let to_string track =
+    let name, year =
+      match track with
       | Monza year -> ("Monza", year)
       | Zolder year -> ("Zolder", year)
       | BrandsHatch year -> ("Brands Hatch", year)
@@ -91,7 +91,7 @@ module Track = struct
       | Suzuka year -> ("Suzuka", year)
       | LagunaSeca year -> ("Laguna Seca", year)
     in
-    n ^ " " ^ string_of_int y
+    name ^ " " ^ string_of_int year
 
   let parse json =
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
@@ -100,7 +100,7 @@ end
 module Session = struct
   type t = {
     index: int;
-    track_name : Track.name;
+    track_name : Track.t;
     session_type : SessionType.t;
   }
 
