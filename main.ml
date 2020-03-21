@@ -6,19 +6,21 @@ module SessionType = struct
     | Qualifying
     | Practice
 
-  let parse json =
-    let str = json |> member "sessionType" |> to_string in
+  let from_string str =
     match str with
     | "R" -> Race
     | "Q" -> Qualifying
     | "P" -> Practice
-    | _ -> failwith "Unknown session type"
+    | _ -> failwith ("Unknown session type: " ^ str)
 
   let to_string session_type =
     match session_type with
     | Race -> "Race"
     | Qualifying -> "Qualifying"
     | Practice -> "Practice"
+
+  let parse json =
+    json |> member "sessionType" |> Yojson.Basic.Util.to_string |> from_string
 end
 
 module Track = struct
@@ -26,12 +28,11 @@ module Track = struct
     | BrandsHatch of int
     | Monza of int
 
-  let parse json =
-    let str = json |> member "trackName" |> to_string in
+  let from_string str =
     match str with
     | "brands_hatch" -> BrandsHatch 2018
     | "brands_hatch2019" -> BrandsHatch 2019
-    | _ -> BrandsHatch 0
+    | _ -> failwith ("Unknown track name: " ^ str)
 
   let to_string name =
     let n, y =
@@ -40,6 +41,9 @@ module Track = struct
       | Monza year -> ("Monza", year)
     in
     n ^ " " ^ string_of_int y
+
+  let parse json =
+    json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
 end
 
 module Session = struct
