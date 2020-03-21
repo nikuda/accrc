@@ -97,27 +97,50 @@ module Track = struct
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
 end
 
+module SessionResult = struct
+  type t = {
+    best_lap: int;
+    best_splits: int list;
+  }
+
+  let parse json =
+    let result = json |> member "sessionResult" |> to_assoc in
+    let best_lap =
+      try List.assoc "bestlap" result |> to_int
+      with Not_found -> failwith ("Parsing error: bestlap")
+    in
+    let best_splits =
+      try List.assoc "bestSplits" result |> to_list |> List.map to_int
+      with Not_found -> failwith ("Parsing error: bestSplits")
+    in
+    { best_lap; best_splits }
+end
+
 module Session = struct
   type t = {
     index: int;
     track_name : Track.t;
     session_type : SessionType.t;
+    result : SessionResult.t;
   }
 
-  let create index session_type track_name = { index; session_type; track_name }
+  let create index session_type track_name result =
+    { index; session_type; track_name; result }
 
   let parse json =
     let index = json |> member "sessionIndex" |> to_int in
     let track_name = Track.parse json in
     let session_type = SessionType.parse json in
-    create index session_type track_name
+    let session_result = SessionResult.parse json in
+    create index session_type track_name session_result
 end
 
-
 let main () =
+  let open Session in
   let json = Yojson.Basic.from_channel stdin in
   let r = Session.parse json in
-  let open Session in
-  (SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index) ^ " - " ^ (Track.to_string r.track_name) |> print_endline
+  (SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index) ^ " - " ^ (Track.to_string r.track_name) |> print_endline;
+  print_endline (string_of_int r.result.SessionResult.best_lap);
+  List.iter (fun t -> print_endline (string_of_int t)) r.result.SessionResult.best_splits
 
 let () = main ()
