@@ -101,6 +101,7 @@ module SessionResult = struct
   type t = {
     best_lap: int;
     best_splits: int list;
+    is_wet_session: bool;
   }
 
   let parse json =
@@ -113,7 +114,13 @@ module SessionResult = struct
       try List.assoc "bestSplits" result |> to_list |> List.map to_int
       with Not_found -> failwith ("Parsing error: bestSplits")
     in
-    { best_lap; best_splits }
+    let is_wet_session =
+      try
+        let x = List.assoc "isWetSession" result |> to_int in
+        if x == 1 then true else false
+      with Not_found -> failwith ("Parsing error: isWetSession")
+    in
+    { best_lap; best_splits; is_wet_session }
 end
 
 module Session = struct
@@ -135,21 +142,20 @@ module Session = struct
     create index session_type track_name session_result
 end
 
-type lap = Lap of int * int * int
-
-let to_time ms =
-  Lap (ms / 60000, (ms mod 60000) / 1000, ms mod 1000)
-
-let show_time lap =
-  match lap with
-  | Lap (m, s, ms) -> string_of_int m ^ ":" ^ string_of_int s ^ ":" ^ string_of_int ms
+let show_time ms =
+  let (m, s, ms) = (ms / 60000, (ms mod 60000) / 1000, ms mod 1000) in
+  string_of_int m ^ ":" ^ string_of_int s ^ ":" ^ string_of_int ms
 
 let main () =
   let open Session in
   let json = Yojson.Basic.from_channel stdin in
   let r = Session.parse json in
-  (SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index) ^ " - " ^ (Track.to_string r.track_name) |> print_endline;
-  print_endline (show_time (to_time r.result.SessionResult.best_lap));
-  List.iter (fun t -> print_endline (show_time (to_time t))) r.result.SessionResult.best_splits
+  print_string (Track.to_string r.track_name);
+  print_string " - ";
+  print_string ((SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index));
+  print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
+  print_newline ();
+  print_endline (show_time r.result.SessionResult.best_lap);
+  List.iter (fun t -> print_endline (show_time t)) r.result.SessionResult.best_splits
 
 let () = main ()
