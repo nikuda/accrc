@@ -25,20 +25,71 @@ end
 
 module Track = struct
   type name =
-    | BrandsHatch of int
     | Monza of int
+    | Zolder of int
+    | BrandsHatch of int
+    | Silverstone of int
+    | PaulRicard of int
+    | Misano of int
+    | Spa of int
+    | Nurburgring of int
+    | Barcelona of int
+    | Hungaroring of int
+    | Zandvoort of int
+    | Kyalami of int
+    | MountPanorama of int
+    | Suzuka of int
+    | LagunaSeca of int
+
 
   let from_string str =
     match str with
+    | "monza" -> Monza 2018
+    | "monza_2019" -> Monza 2019
+    | "zolder" -> Zolder 2018
+    | "zolder_2019" -> Zolder 2019
     | "brands_hatch" -> BrandsHatch 2018
-    | "brands_hatch2019" -> BrandsHatch 2019
+    | "brands_hatch_2019" -> BrandsHatch 2019
+    | "silverstone" -> Silverstone 2018
+    | "silverstone_2019" -> Silverstone 2019
+    | "paul_ricard" -> PaulRicard 2018
+    | "paul_ricard_2019" -> PaulRicard 2019
+    | "misano" -> Misano 2018
+    | "misano_2019" -> Misano 2019
+    | "spa" -> Spa 2018
+    | "spa_2019" -> Spa 2019
+    | "nurburgring" -> Nurburgring 2018
+    | "nurburgring_2019" -> Nurburgring 2019
+    | "barcelona" -> Barcelona 2018
+    | "barcelona_2019" -> Barcelona 2019
+    | "hungaroring" -> Hungaroring 2018
+    | "hungaroring_2019" -> Hungaroring 2019
+    | "zandvoort" -> Zandvoort 2018
+    | "zandvoort_2019" -> Zandvoort 2019
+    | "kyalami_2019" -> Kyalami 2019
+    | "mount_panorama_2019" -> MountPanorama 2019
+    | "suzuka_2019" -> Suzuka 2019
+    | "laguna_seca_2019" -> LagunaSeca 2019
     | _ -> failwith ("Unknown track name: " ^ str)
 
   let to_string name =
     let n, y =
       match name with
-      | BrandsHatch year -> ("Brands Hatch", year)
       | Monza year -> ("Monza", year)
+      | Zolder year -> ("Zolder", year)
+      | BrandsHatch year -> ("Brands Hatch", year)
+      | Silverstone year -> ("Silverstone", year)
+      | PaulRicard year -> ("Paul Ricard", year)
+      | Misano year -> ("Misano", year)
+      | Spa year -> ("Spa-Francorchamps", year)
+      | Nurburgring year -> ("Nürburgring", year)
+      | Barcelona year -> ("Barcelona", year)
+      | Hungaroring year -> ("Hungaroring", year)
+      | Zandvoort year -> ("Zandvoort", year)
+      | Kyalami year -> ("Kyalami", year)
+      | MountPanorama year -> ("Mount Panorama", year)
+      | Suzuka year -> ("Suzuka", year)
+      | LagunaSeca year -> ("Laguna Seca", year)
     in
     n ^ " " ^ string_of_int y
 
