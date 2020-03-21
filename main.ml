@@ -97,11 +97,21 @@ module Track = struct
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
 end
 
+module Leaderboard = struct
+  type t = {
+    carId : int;
+  }
+
+(*   let parse json =
+ *)
+end
+
 module SessionResult = struct
   type t = {
     best_lap: int;
     best_splits: int list;
     is_wet_session: bool;
+    leaderboard: leaderboard.t;
   }
 
   let parse json =
@@ -120,8 +130,14 @@ module SessionResult = struct
         if x == 1 then true else false
       with Not_found -> failwith ("Parsing error: isWetSession")
     in
-    { best_lap; best_splits; is_wet_session }
+    let leaderboard =
+      { cadId: 7 }
+    in
+    { best_lap; best_splits; is_wet_session; leaderboard }
 end
+
+
+
 
 module Session = struct
   type t = {
