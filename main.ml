@@ -176,11 +176,38 @@ module SessionType = struct
     json |> member "sessionType" |> Yojson.Basic.Util.to_string |> from_string
 end
 
+module CupCategory = struct
+  type t =
+    | Overall
+    | ProAm
+    | Am
+    | Silver
+    | National
+
+  let from_int x =
+    match x with
+    | 0 -> Overall
+    | 1 -> ProAm
+    | 2 -> Am
+    | 3 -> Silver
+    | 4 -> National
+    | _ -> failwith ("Unknown cup category: " ^ string_of_int x)
+
+  let to_string cup_category =
+     match cup_category with
+    | Overall -> "Overall"
+    | ProAm -> "ProAm"
+    | Am -> "Am"
+    | Silver -> "Silver"
+    | National -> "National"
+end
+
 module Leaderboard = struct
   type entry = {
     car_id : int;
-    car_model : Car.t;
     car_number : int;
+    car_model : Car.t;
+    cup_category : CupCategory.t;
     driver_id : int;
     driver : Driver.t;
   }
@@ -188,10 +215,12 @@ module Leaderboard = struct
   type t = entry list
 
   let parse_leaderboard json =
+    let car = json |> member "car" in
     {
-      car_id =  json |> member "car" |> member "carId" |> to_int;
-      car_model = json |> member "car" |> member "carModel" |> to_int |> Car.from_int;
-      car_number = json |> member "car" |> member "raceNumber" |> to_int;
+      car_id = car |> member "carId" |> to_int;
+      car_number = car |> member "raceNumber" |> to_int;
+      car_model = car |> member "carModel" |> to_int |> Car.from_int;
+      cup_category = car |> member "cupCategory" |> to_int |> CupCategory.from_int;
       driver_id = json |> member "currentDriverIndex" |> to_int;
       driver = json |> member "currentDriver" |> Driver.parse
     }
@@ -256,7 +285,8 @@ let main () =
   List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;
   List.iteri (fun i c -> print_endline (string_of_int (i + 1) ^ ".\t" ^
       c.Leaderboard.driver.Driver.first_name ^ " " ^ c.Leaderboard.driver.Driver.last_name ^ "\t\t" ^
-      c.Leaderboard.driver.Driver.short_name ^ " " ^ string_of_int c.Leaderboard.car_number ^ "\t\t" ^
+      c.Leaderboard.driver.Driver.short_name ^ " " ^ CupCategory.to_string c.Leaderboard.cup_category ^ " " ^
+      string_of_int c.Leaderboard.car_number ^ "\t\t" ^
       Car.to_string c.Leaderboard.car_model)) r.result.SessionResult.leaderboard
 
 let () = main ()
