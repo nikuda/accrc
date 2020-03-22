@@ -1,26 +1,64 @@
 open Yojson.Basic.Util
 
-module SessionType = struct
+module Car = struct
   type t =
-    | Race
-    | Qualifying
-    | Practice
+    | Porsche of string * int
+    | Mercedes of string * int
+    | Ferrari of string * int
+    | Audi of string * int
+    | Lamborghini of string * int
+    | McLaren of string * int
+    | BMW of string * int
+    | Bentley of string * int
+    | Nissan of string * int
+    | AstonMartin of string * int
+    | Jaguar of string * int
+    | Lexus of string * int
+    | Honda of string * int
 
-  let from_string str =
-    match str with
-    | "R" -> Race
-    | "Q" -> Qualifying
-    | "P" -> Practice
-    | _ -> failwith ("Unknown session type: " ^ str)
+  let from_int x =
+    match x with
+    | 0 -> Porsche ("991 GT3", 2018)
+    | 1 -> Mercedes ("AMG GT3", 2018)
+    | 2 -> Ferrari ("488 GT3", 2018)
+    | 3 -> Audi ("R8 LMS", 2018)
+    | 4 -> Lamborghini ("Huracan GT3", 2018)
+    | 5 -> McLaren ("650S GT3", 2018)
+    | 6 -> Nissan ("GT-R Nismo GT3", 2018)
+    | 7 -> BMW ("M6 GT3", 2018)
+    | 8 -> Bentley ("Continental GT3", 2018)
+    | 9 -> Porsche ("991.2 GT3 Cup", 2018)
+    | 10 -> Nissan ("GT-R Nismo GT3", 2017)
+    | 11 -> Bentley ("Continental GT3", 2016)
+    | 12 -> AstonMartin ("Vantage V12 GT3", 2018)
+    | 13 -> Lamborghini ("Gallardo R-EX", 2018)
+    | 14 -> Jaguar ("G3", 2018)
+    | 15 -> Lexus ("RC F GT3", 2018)
+    | 16 -> Lamborghini ("Huracan Evo", 2019)
+    | 17 -> Honda ("NSX GT3", 2019)
+    | 18 -> Lamborghini ("Huracan SuperTrofeo", 2018)
+    | 19 -> Audi ("R8 LMS Evo", 2018)
+    | 20 -> AstonMartin ("Vantage AMR GT3", 2018)
+    | 21 -> Honda ("NSX Evo", 2018)
+    | 22 -> McLaren ("720S GT3", 2018)
+    | 23 -> Porsche ("911 II GT3 R", 2018)
+    | _ -> failwith ("Unknown car code: " ^ string_of_int x)
 
-  let to_string session_type =
-    match session_type with
-    | Race -> "Race"
-    | Qualifying -> "Qualifying"
-    | Practice -> "Practice"
-
-  let parse json =
-    json |> member "sessionType" |> Yojson.Basic.Util.to_string |> from_string
+  let to_string car =
+    match car with
+    | Porsche (model, year) -> "Porsche " ^ " " ^ model ^ " " ^ string_of_int year
+    | Mercedes (model, year) -> "Mercedes " ^ " " ^ model ^ " " ^ string_of_int year
+    | Ferrari (model, year) -> "Ferrari " ^ " " ^ model ^ " " ^ string_of_int year
+    | Audi (model, year) -> "Audi " ^ " " ^ model ^ " " ^ string_of_int year
+    | Lamborghini (model, year) -> "Lamborghini " ^ " " ^ model ^ " " ^ string_of_int year
+    | McLaren (model, year) -> "McLaren " ^ " " ^ model ^ " " ^ string_of_int year
+    | BMW (model, year) -> "BMW " ^ " " ^ model ^ " " ^ string_of_int year
+    | Bentley (model, year) -> "Bentley " ^ " " ^ model ^ " " ^ string_of_int year
+    | Nissan (model, year) -> "Nissan " ^ " " ^ model ^ " " ^ string_of_int year
+    | AstonMartin (model, year) -> "Aston Martin " ^ " " ^ model ^ " " ^ string_of_int year
+    | Jaguar (model, year) -> "Jaguar " ^ " " ^ model ^ " " ^ string_of_int year
+    | Lexus (model, year) -> "Lexus " ^ " " ^ model ^ " " ^ string_of_int year
+    | Honda (model, year) -> "Honda " ^ " " ^ model ^ " " ^ string_of_int year
 end
 
 module Track = struct
@@ -97,13 +135,47 @@ module Track = struct
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
 end
 
+module SessionType = struct
+  type t =
+    | Race
+    | Qualifying
+    | Practice
+
+  let from_string str =
+    match str with
+    | "R" -> Race
+    | "Q" -> Qualifying
+    | "P" -> Practice
+    | _ -> failwith ("Unknown session type: " ^ str)
+
+  let to_string session_type =
+    match session_type with
+    | Race -> "Race"
+    | Qualifying -> "Qualifying"
+    | Practice -> "Practice"
+
+  let parse json =
+    json |> member "sessionType" |> Yojson.Basic.Util.to_string |> from_string
+end
+
 module Leaderboard = struct
-  type t = {
-    carId : int;
+  type entry = {
+    car_id : int;
+    car_model : Car.t;
+    driver_id : int;
   }
 
-(*   let parse json =
- *)
+  type t = entry list
+
+  let parse_leaderboard json =
+    {
+      car_id =  json |> member "car" |> member "carId" |> to_int;
+      car_model = json |> member "car" |> member "carModel" |> to_int |> Car.from_int;
+      driver_id = json |> member "currentDriverIndex" |> to_int;
+    }
+
+  let parse json  =
+    List.map parse_leaderboard json
 end
 
 module SessionResult = struct
@@ -111,33 +183,20 @@ module SessionResult = struct
     best_lap: int;
     best_splits: int list;
     is_wet_session: bool;
-    leaderboard: leaderboard.t;
+    leaderboard: Leaderboard.t;
   }
 
+  let to_wet_session x =
+    if x == 1 then true else false
+
   let parse json =
-    let result = json |> member "sessionResult" |> to_assoc in
-    let best_lap =
-      try List.assoc "bestlap" result |> to_int
-      with Not_found -> failwith ("Parsing error: bestlap")
-    in
-    let best_splits =
-      try List.assoc "bestSplits" result |> to_list |> List.map to_int
-      with Not_found -> failwith ("Parsing error: bestSplits")
-    in
-    let is_wet_session =
-      try
-        let x = List.assoc "isWetSession" result |> to_int in
-        if x == 1 then true else false
-      with Not_found -> failwith ("Parsing error: isWetSession")
-    in
-    let leaderboard =
-      { cadId: 7 }
-    in
+    let result = json |> member "sessionResult" in
+    let best_lap = result |> member "bestlap" |> to_int in
+    let best_splits = result |> member "bestSplits" |> to_list |> List.map to_int in
+    let is_wet_session = result |> member "isWetSession" |> to_int |> to_wet_session in
+    let leaderboard = result |> member "leaderBoardLines" |> to_list |> Leaderboard.parse in
     { best_lap; best_splits; is_wet_session; leaderboard }
 end
-
-
-
 
 module Session = struct
   type t = {
@@ -172,6 +231,7 @@ let main () =
   print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
   print_newline ();
   print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));
-  List.iteri (fun i t -> print_endline ("Best split " ^ string_of_int (i + 1) ^ ": " ^ (show_time t))) r.result.SessionResult.best_splits
+  List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;
+  List.iteri (fun i c -> print_endline (string_of_int (i + 1) ^ ". " ^ string_of_int c.Leaderboard.car_id ^ " " ^ Car.to_string c.Leaderboard.car_model)) r.result.SessionResult.leaderboard
 
 let () = main ()
