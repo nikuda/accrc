@@ -37,28 +37,28 @@ module Car = struct
     | 16 -> Lamborghini ("Huracan Evo", 2019)
     | 17 -> Honda ("NSX GT3", 2019)
     | 18 -> Lamborghini ("Huracan SuperTrofeo", 2018)
-    | 19 -> Audi ("R8 LMS Evo", 2018)
-    | 20 -> AstonMartin ("Vantage AMR GT3", 2018)
-    | 21 -> Honda ("NSX Evo", 2018)
-    | 22 -> McLaren ("720S GT3", 2018)
-    | 23 -> Porsche ("911 II GT3 R", 2018)
+    | 19 -> Audi ("R8 LMS Evo", 2019)
+    | 20 -> AstonMartin ("Vantage AMR GT3", 2019)
+    | 21 -> Honda ("NSX Evo", 2019)
+    | 22 -> McLaren ("720S GT3", 2019)
+    | 23 -> Porsche ("911 II GT3 R", 2019)
     | _ -> failwith ("Unknown car code: " ^ string_of_int x)
 
   let to_string car =
     match car with
-    | Porsche (model, year) -> "Porsche " ^ " " ^ model ^ " " ^ string_of_int year
-    | Mercedes (model, year) -> "Mercedes " ^ " " ^ model ^ " " ^ string_of_int year
-    | Ferrari (model, year) -> "Ferrari " ^ " " ^ model ^ " " ^ string_of_int year
-    | Audi (model, year) -> "Audi " ^ " " ^ model ^ " " ^ string_of_int year
-    | Lamborghini (model, year) -> "Lamborghini " ^ " " ^ model ^ " " ^ string_of_int year
-    | McLaren (model, year) -> "McLaren " ^ " " ^ model ^ " " ^ string_of_int year
-    | BMW (model, year) -> "BMW " ^ " " ^ model ^ " " ^ string_of_int year
-    | Bentley (model, year) -> "Bentley " ^ " " ^ model ^ " " ^ string_of_int year
-    | Nissan (model, year) -> "Nissan " ^ " " ^ model ^ " " ^ string_of_int year
-    | AstonMartin (model, year) -> "Aston Martin " ^ " " ^ model ^ " " ^ string_of_int year
-    | Jaguar (model, year) -> "Jaguar " ^ " " ^ model ^ " " ^ string_of_int year
-    | Lexus (model, year) -> "Lexus " ^ " " ^ model ^ " " ^ string_of_int year
-    | Honda (model, year) -> "Honda " ^ " " ^ model ^ " " ^ string_of_int year
+    | Porsche (model, year) -> "Porsche\t\t" ^ model ^ " " ^ string_of_int year
+    | Mercedes (model, year) -> "Mercedes\t\t" ^ model ^ " " ^ string_of_int year
+    | Ferrari (model, year) -> "Ferrari\t\t" ^ model ^ " " ^ string_of_int year
+    | Audi (model, year) -> "Audi\t\t" ^ model ^ " " ^ string_of_int year
+    | Lamborghini (model, year) -> "Lamborghini\t" ^ model ^ " " ^ string_of_int year
+    | McLaren (model, year) -> "McLaren\t\t" ^ model ^ " " ^ string_of_int year
+    | BMW (model, year) -> "BMW\t\t" ^ model ^ " " ^ string_of_int year
+    | Bentley (model, year) -> "Bentley\t\t" ^ model ^ " " ^ string_of_int year
+    | Nissan (model, year) -> "Nissan\t\t" ^ model ^ " " ^ string_of_int year
+    | AstonMartin (model, year) -> "Aston Martin\t\t" ^ model ^ " " ^ string_of_int year
+    | Jaguar (model, year) -> "Jaguar\t\t" ^ model ^ " " ^ string_of_int year
+    | Lexus (model, year) -> "Lexus\t\t" ^ model ^ " " ^ string_of_int year
+    | Honda (model, year) -> "Honda\t\t" ^ model ^ " " ^ string_of_int year
 end
 
 module Track = struct
@@ -135,6 +135,24 @@ module Track = struct
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
 end
 
+module Driver = struct
+  type t = {
+    id : string;
+    first_name : string;
+    last_name : string;
+    short_name : string;
+  }
+
+  let parse json =
+    {
+      id = json |> member "playerId" |> to_string;
+      first_name = json |> member "firstName" |> to_string;
+      last_name = json |> member "lastName" |> to_string;
+      short_name = json |> member "shortName" |> to_string;
+    }
+
+end
+
 module SessionType = struct
   type t =
     | Race
@@ -162,7 +180,9 @@ module Leaderboard = struct
   type entry = {
     car_id : int;
     car_model : Car.t;
+    car_number : int;
     driver_id : int;
+    driver : Driver.t;
   }
 
   type t = entry list
@@ -171,7 +191,9 @@ module Leaderboard = struct
     {
       car_id =  json |> member "car" |> member "carId" |> to_int;
       car_model = json |> member "car" |> member "carModel" |> to_int |> Car.from_int;
+      car_number = json |> member "car" |> member "raceNumber" |> to_int;
       driver_id = json |> member "currentDriverIndex" |> to_int;
+      driver = json |> member "currentDriver" |> Driver.parse
     }
 
   let parse json  =
@@ -232,6 +254,9 @@ let main () =
   print_newline ();
   print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));
   List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;
-  List.iteri (fun i c -> print_endline (string_of_int (i + 1) ^ ". " ^ string_of_int c.Leaderboard.car_id ^ " " ^ Car.to_string c.Leaderboard.car_model)) r.result.SessionResult.leaderboard
+  List.iteri (fun i c -> print_endline (string_of_int (i + 1) ^ ".\t" ^
+      c.Leaderboard.driver.Driver.first_name ^ " " ^ c.Leaderboard.driver.Driver.last_name ^ "\t\t" ^
+      c.Leaderboard.driver.Driver.short_name ^ " " ^ string_of_int c.Leaderboard.car_number ^ "\t\t" ^
+      Car.to_string c.Leaderboard.car_model)) r.result.SessionResult.leaderboard
 
 let () = main ()
