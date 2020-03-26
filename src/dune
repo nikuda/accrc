@@ -1,0 +1,8 @@
+(executable
+ (name main)
+ (libraries uutf yojson))
+
+(alias
+ (name runtest)
+ (action
+  (run ./main.exe < data/Round1_Suzuka_R1-UTF8.json)))
