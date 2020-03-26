@@ -150,7 +150,6 @@ module Driver = struct
       last_name = json |> member "lastName" |> to_string;
       short_name = json |> member "shortName" |> to_string;
     }
-
 end
 
 module SessionType = struct
@@ -276,10 +275,19 @@ let main () =
   let open Session in
   let json = Yojson.Basic.from_channel stdin in
   let r = Session.parse json in
+  let p = Uutf.String.encoding_guess "this is a test" in
+  let x pp =
+    match pp with
+      | (`UTF_16BE, _) -> "`UTF_16BE"
+      | (`UTF_16LE, _) -> "`UTF_16LE"
+      | (`UTF_8, _)  -> " `UTF_8 "
+  in
   print_string (Track.to_string r.track);
   print_string " - ";
   print_string ((SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index));
   print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
+  print_newline ();
+  print_string (x p);
   print_newline ();
   print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));
   List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;
