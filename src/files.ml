@@ -52,3 +52,9 @@ let read_files config =
   let dir = Sys.readdir config.dir_path in
   Array.iter (iter_files config) dir
 
+let watch config =
+  let rec loop () =
+    read_files config;
+    Unix.sleep 10;
+    loop ()
+  in loop ()
