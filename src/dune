@@ -1,6 +1,6 @@
 (executable
  (name main)
- (libraries uutf yojson))
+ (libraries unix uutf yojson))
 
 (alias
  (name runtest)

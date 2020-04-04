@@ -1,5 +1,12 @@
 open Models
 
+type config = { dir_path: string }
+
+let config: config = { dir_path = "./data/" }
+
+let get_path file =
+  String.concat "" [config.dir_path; file]
+
 let show_time ms =
   let (m, s, ms) = (ms / 60000, (ms mod 60000) / 1000, ms mod 1000) in
   string_of_int m ^ ":" ^ string_of_int s ^ ":" ^ string_of_int ms
@@ -15,12 +22,11 @@ let show_pos pos =
 
 let show_result r =
   let open Session in
+  print_newline ();
   print_string (Track.to_string r.track);
   print_string " - ";
   print_string ((SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index));
   print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
-  print_newline ();
-
   print_newline ();
   print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));
   List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;
@@ -31,12 +37,17 @@ let show_result r =
       Car.to_string c.Leaderboard.car_model)) r.result.SessionResult.leaderboard
 
 let parse_result file =
-  let file_string = Files.open_file (String.concat "" ["./data/"; file]) in
+  let file_string = Files.open_file (get_path file) in
   let json = Yojson.Basic.from_string file_string in
   Session.parse json
 
+let iter_files file =
+  let stats = Unix.stat (get_path file) in
+  show_result(parse_result file);
+  print_endline (string_of_float stats.st_mtime)
+
 let main () =
-  let dir = Sys.readdir "./data" in
-  Array.iter (fun f -> show_result(parse_result f)) dir
+  let dir = Sys.readdir config.dir_path in
+  Array.iter iter_files dir
 
 let () = main ()
