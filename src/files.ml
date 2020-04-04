@@ -1,3 +1,6 @@
+open Config
+open Models
+
 let lines ?encoding (src : [`Channel of in_channel | `String of string]) =
   let rec loop d buf acc = match Uutf.decode d with
   | `Uchar u ->
@@ -31,3 +34,21 @@ let open_file str =
   with e ->
     close_in_noerr inf;
     raise e
+
+let get_path config file =
+  String.concat "" [config.dir_path; file]
+
+let parse_result config file =
+  let file_string = open_file (get_path config file) in
+  let json = Yojson.Basic.from_string file_string in
+  Session.parse json
+
+let iter_files config file =
+  let stats = Unix.stat (get_path config file) in
+  Print.show_result(parse_result config file);
+  print_endline (string_of_float stats.st_mtime)
+
+let read_files config =
+  let dir = Sys.readdir config.dir_path in
+  Array.iter (iter_files config) dir
+

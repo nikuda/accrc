@@ -1,53 +1,7 @@
-open Models
-
-type config = { dir_path: string }
-
-let config: config = { dir_path = "./data/" }
-
-let get_path file =
-  String.concat "" [config.dir_path; file]
-
-let show_time ms =
-  let (m, s, ms) = (ms / 60000, (ms mod 60000) / 1000, ms mod 1000) in
-  string_of_int m ^ ":" ^ string_of_int s ^ ":" ^ string_of_int ms
-
-let show_pos pos =
-  let p = pos + 1 in
-  let pad_p =
-    match p with
-    | x when x < 10 -> String.concat "" [" "; string_of_int x]
-    | _ -> string_of_int p
-  in
-    String.concat "" [" "; pad_p; ".  "]
-
-let show_result r =
-  let open Session in
-  print_newline ();
-  print_string (Track.to_string r.track);
-  print_string " - ";
-  print_string ((SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index));
-  print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
-  print_newline ();
-  print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));
-  List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;
-  List.iteri (fun i c -> print_endline (show_pos i ^
-      c.Leaderboard.driver.Driver.first_name ^ " " ^ c.Leaderboard.driver.Driver.last_name ^ "\t\t" ^
-      c.Leaderboard.driver.Driver.short_name ^ " " ^ CupCategory.to_string c.Leaderboard.cup_category ^ " " ^
-      string_of_int c.Leaderboard.car_number ^ "\t\t" ^
-      Car.to_string c.Leaderboard.car_model)) r.result.SessionResult.leaderboard
-
-let parse_result file =
-  let file_string = Files.open_file (get_path file) in
-  let json = Yojson.Basic.from_string file_string in
-  Session.parse json
-
-let iter_files file =
-  let stats = Unix.stat (get_path file) in
-  show_result(parse_result file);
-  print_endline (string_of_float stats.st_mtime)
+open Config
 
 let main () =
-  let dir = Sys.readdir config.dir_path in
-  Array.iter iter_files dir
+  print_endline config.dir_path;
+  Files.read_files config
 
 let () = main ()
