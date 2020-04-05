@@ -18,7 +18,7 @@ let show_result r =
   print_newline ();
   print_string (Track.to_string r.track);
   print_string " - ";
-  print_string ((SessionType.to_string r.session_type) ^ " " ^ (string_of_int r.index));
+  print_string (SessionType.to_string r.session_type);
   print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
   print_newline ();
   print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));

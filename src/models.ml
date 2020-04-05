@@ -154,22 +154,27 @@ end
 
 module SessionType = struct
   type t =
-    | Race
-    | Qualifying
-    | Practice
+    | Race of int
+    | Qualifying of int
+    | Practice of int
 
   let from_string str =
-    match str with
-    | "R" -> Race
-    | "Q" -> Qualifying
-    | "P" -> Practice
+    let session_number =
+      try int_of_string (Char.escaped str.[1])
+      with _ -> 0
+    in
+    match str.[0] with
+    | 'R' -> Race session_number
+    | 'Q' -> Qualifying session_number
+    | 'P' -> Practice session_number
     | _ -> failwith ("Unknown session type: " ^ str)
 
   let to_string session_type =
+    let show_num n = if n > 0 then " " ^ string_of_int n else "" in
     match session_type with
-    | Race -> "Race"
-    | Qualifying -> "Qualifying"
-    | Practice -> "Practice"
+    | Race n -> "Race" ^ show_num n
+    | Qualifying n -> "Qualifying " ^ show_num n
+    | Practice n -> "Practice " ^ show_num n
 
   let parse json =
     json |> member "sessionType" |> Yojson.Basic.Util.to_string |> from_string
