@@ -57,4 +57,4 @@ let watch config =
     read_files config;
     Unix.sleep 10;
     loop ()
-  in loop ()
+  in Config.x; loop ()

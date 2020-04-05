@@ -1,9 +1,4 @@
 (executable
  (name main)
  (public_name accrc)
- (libraries unix uutf yojson))
-
-(alias
- (name runtest)
- (action
-  (run ./main.exe < data/Round1_Suzuka_R1-UTF8.json)))
+ (libraries unix uutf yojson sqlite3))

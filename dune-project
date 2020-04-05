@@ -1,4 +1,4 @@
-(lang dune 1.11)
+(lang dune 2.4)
 (name accrc)
 
 (generate_opam_files true)
@@ -10,6 +10,6 @@
  (name accrc)
  (synopsis "Assetto Corsa Competizione results")
  (depends
-  (dune (> 1.5))
-  (uutf (> 1.0.2))
-  (yojson (> 1.7.0))))
+  (dune (>= 2.4))
+  (uutf (>= 1.0.2))
+  (yojson (>= 1.7.0))))
