@@ -41,7 +41,7 @@ let get_path config file =
 let parse_result config file =
   let file_string = open_file (get_path config file) in
   let json = Yojson.Basic.from_string file_string in
-  Session.parse json
+  Session.parse file json
 
 let iter_files config file =
   let stats = Unix.stat (get_path config file) in

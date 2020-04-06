@@ -20,6 +20,7 @@ let show_result r =
   print_string " - ";
   print_string (SessionType.to_string r.session_type);
   print_string (if r.result.SessionResult.is_wet_session then " - WET" else "");
+  print_string (" - " ^ Utils.string_of_tm (snd r.time));
   print_newline ();
   print_endline ("Best lap: " ^ (show_time r.result.SessionResult.best_lap));
   List.iteri (fun i t -> print_endline ("Best S" ^ string_of_int (i + 1) ^ ":  " ^ (show_time t))) r.result.SessionResult.best_splits;

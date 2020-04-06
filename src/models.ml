@@ -259,15 +259,17 @@ module Session = struct
     track : Track.t;
     session_type : SessionType.t;
     result : SessionResult.t;
+    time: float * Unix.tm
   }
 
-  let create index session_type track result =
-    { index; session_type; track; result }
+  let create index session_type track result time =
+    { index; session_type; track; result; time }
 
-  let parse json =
+  let parse filename json =
     let index = json |> member "sessionIndex" |> to_int in
     let session_type = SessionType.parse json in
     let track = Track.parse json in
     let result = SessionResult.parse json in
-    create index session_type track result
+    let time = Utils.epoch_seconds filename in
+    create index session_type track result time
 end
