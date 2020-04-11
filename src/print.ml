@@ -6,7 +6,7 @@ open Driver
 
 let show_time sec =
   let (m, s, ms) = (sec / 60000, (sec mod 60000) / 1000, sec mod 1000) in
-  Printf.sprintf "%0d:%0d:%0d" m s ms
+  Printf.sprintf "%d:%02d:%03d" m s ms
 
 let show_pos pos =
   let p = pos + 1 in
