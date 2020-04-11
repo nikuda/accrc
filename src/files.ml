@@ -43,18 +43,32 @@ let parse_result config file =
   let json = Yojson.Basic.from_string file_string in
   Session.parse file json
 
-let iter_files config file =
-  let stats = Unix.stat (get_path config file) in
-  Print.show_result(parse_result config file);
-  print_endline (string_of_float stats.st_mtime)
+let iter_files config file_cache file_name =
+  let file_stat = Unix.stat (get_path config file_name) in
+  let file_mtime = file_stat.st_mtime in
+  match Hashtbl.find_opt file_cache file_name with
+  | None ->
+      let result = parse_result config file_name in
+      Hashtbl.add file_cache file_name file_mtime;
+      print_string "NEW ---- ";
+      Print.show_title(result)
+  | Some cur_file_mtime ->
+      if cur_file_mtime < file_mtime
+      then
+        let result = parse_result config file_name in
+        Hashtbl.replace file_cache file_name file_mtime;
+        print_string "UPDATE ---- ";
+        Print.show_title(result)
+      else ()
 
-let read_files config =
+let read_files config file_cache =
   let dir = Sys.readdir config.dir_path in
-  Array.iter (iter_files config) dir
+  Array.iter (iter_files config file_cache) dir
 
 let watch config =
+  let file_cache = Hashtbl.create 10000 in
   let rec loop () =
-    read_files config;
+    read_files config file_cache;
     Unix.sleep 10;
     loop ()
   in Config.x; loop ()

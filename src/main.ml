@@ -1,8 +1,8 @@
 open Config
 
 let main () =
-  print_endline config.dir_path;
-  (* Files.watch config *)
-  Files.read_files config
+  Printf.printf "Source directory: %s\n" config.dir_path;
+  Files.watch config
+  (* Files.read_files config *)
 
 let () = main ()
