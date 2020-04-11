@@ -44,21 +44,26 @@ module Car = struct
     | 23 -> Porsche ("911 II GT3 R", 2019)
     | _ -> failwith ("Unknown car code: " ^ string_of_int x)
 
+  let fmt =
+    format_of_string "%s\t\t%s %d"
+
   let to_string car =
-    match car with
-    | Porsche (model, year) -> "Porsche\t\t" ^ model ^ " " ^ string_of_int year
-    | Mercedes (model, year) -> "Mercedes\t\t" ^ model ^ " " ^ string_of_int year
-    | Ferrari (model, year) -> "Ferrari\t\t" ^ model ^ " " ^ string_of_int year
-    | Audi (model, year) -> "Audi\t\t" ^ model ^ " " ^ string_of_int year
-    | Lamborghini (model, year) -> "Lamborghini\t" ^ model ^ " " ^ string_of_int year
-    | McLaren (model, year) -> "McLaren\t\t" ^ model ^ " " ^ string_of_int year
-    | BMW (model, year) -> "BMW\t\t" ^ model ^ " " ^ string_of_int year
-    | Bentley (model, year) -> "Bentley\t\t" ^ model ^ " " ^ string_of_int year
-    | Nissan (model, year) -> "Nissan\t\t" ^ model ^ " " ^ string_of_int year
-    | AstonMartin (model, year) -> "Aston Martin\t\t" ^ model ^ " " ^ string_of_int year
-    | Jaguar (model, year) -> "Jaguar\t\t" ^ model ^ " " ^ string_of_int year
-    | Lexus (model, year) -> "Lexus\t\t" ^ model ^ " " ^ string_of_int year
-    | Honda (model, year) -> "Honda\t\t" ^ model ^ " " ^ string_of_int year
+    let brand, model, year =
+      match car with
+      | Porsche (model, year) -> ("Porsche", model, year)
+      | Mercedes (model, year) ->("Mercedes", model, year)
+      | Ferrari (model, year) -> ("Ferrari", model, year)
+      | Audi (model, year) -> ("Audi", model, year)
+      | Lamborghini (model, year) -> ("Lamborghini", model, year)
+      | McLaren (model, year) -> ("McLaren", model, year)
+      | BMW (model, year) -> ("BMW", model, year)
+      | Bentley (model, year) -> ("Bentley", model, year)
+      | Nissan (model, year) -> ("Nissan", model, year)
+      | AstonMartin (model, year) -> ("AstonMartin", model, year)
+      | Jaguar (model, year) -> ("Jaguar", model, year)
+      | Lexus (model, year) -> ("Lexus", model, year)
+      | Honda (model, year) -> ("Honda", model, year)
+   in Printf.sprintf fmt brand model year
 end
 
 module Track = struct
@@ -78,7 +83,6 @@ module Track = struct
     | MountPanorama of int
     | Suzuka of int
     | LagunaSeca of int
-
 
   let from_string str =
     match str with
@@ -110,6 +114,9 @@ module Track = struct
     | "laguna_seca_2019" -> LagunaSeca 2019
     | _ -> failwith ("Unknown track name: " ^ str)
 
+  let fmt =
+    format_of_string "%s %d"
+
   let to_string track =
     let name, year =
       match track with
@@ -129,7 +136,7 @@ module Track = struct
       | Suzuka year -> ("Suzuka", year)
       | LagunaSeca year -> ("Laguna Seca", year)
     in
-    name ^ " " ^ string_of_int year
+    Printf.sprintf fmt name year
 
   let parse json =
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string
