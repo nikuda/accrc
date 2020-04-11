@@ -31,9 +31,12 @@ let show_best_splits r =
 
 let show_leaderboard r =
   let show_leaderboard_pos i c =
-    Printf.printf "%s %s %s\t\t" (show_pos i) c.driver.first_name c.driver.last_name;
-    Printf.printf "%s %s #%d\t\t" c.driver.short_name (CupCategory.to_string c.cup_category) c.car_number;
-    Printf.printf "%s\n" (Car.to_string c.car_model)
+    let driver_full_name = c.driver.first_name ^ " " ^ c.driver.last_name in
+    let car_name, car_model, car_year = Car.to_tuple c.car_model in
+    Printf.printf "%3d. %-24s" (i + 1) driver_full_name;
+    Printf.printf "%s %3d " c.driver.short_name c.car_number;
+    Printf.printf "%-10s" (CupCategory.to_string c.cup_category);
+    Printf.printf "%-16s %s %d\n" car_name car_model car_year
   in
   List.iteri show_leaderboard_pos r.result.leaderboard
 

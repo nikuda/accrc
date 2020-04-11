@@ -47,23 +47,25 @@ module Car = struct
   let fmt =
     format_of_string "%s\t\t%s %d"
 
+  let to_tuple car =
+    match car with
+    | Porsche (model, year) -> ("Porsche", model, year)
+    | Mercedes (model, year) ->("Mercedes", model, year)
+    | Ferrari (model, year) -> ("Ferrari", model, year)
+    | Audi (model, year) -> ("Audi", model, year)
+    | Lamborghini (model, year) -> ("Lamborghini", model, year)
+    | McLaren (model, year) -> ("McLaren", model, year)
+    | BMW (model, year) -> ("BMW", model, year)
+    | Bentley (model, year) -> ("Bentley", model, year)
+    | Nissan (model, year) -> ("Nissan", model, year)
+    | AstonMartin (model, year) -> ("Aston Martin", model, year)
+    | Jaguar (model, year) -> ("Jaguar", model, year)
+    | Lexus (model, year) -> ("Lexus", model, year)
+    | Honda (model, year) -> ("Honda", model, year)
+
   let to_string car =
-    let brand, model, year =
-      match car with
-      | Porsche (model, year) -> ("Porsche", model, year)
-      | Mercedes (model, year) ->("Mercedes", model, year)
-      | Ferrari (model, year) -> ("Ferrari", model, year)
-      | Audi (model, year) -> ("Audi", model, year)
-      | Lamborghini (model, year) -> ("Lamborghini", model, year)
-      | McLaren (model, year) -> ("McLaren", model, year)
-      | BMW (model, year) -> ("BMW", model, year)
-      | Bentley (model, year) -> ("Bentley", model, year)
-      | Nissan (model, year) -> ("Nissan", model, year)
-      | AstonMartin (model, year) -> ("AstonMartin", model, year)
-      | Jaguar (model, year) -> ("Jaguar", model, year)
-      | Lexus (model, year) -> ("Lexus", model, year)
-      | Honda (model, year) -> ("Honda", model, year)
-   in Printf.sprintf fmt brand model year
+    let brand, model, year = to_tuple car in
+    Printf.sprintf fmt brand model year
 end
 
 module Track = struct
