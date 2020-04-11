@@ -41,7 +41,7 @@ let show_leaderboard r =
     Printf.printf "%3d. %-24s" (i + 1) driver_full_name;
     Printf.printf "%s %3d " c.driver.short_name c.car_number;
     Printf.printf "%-10s" (CupCategory.to_string c.cup_category);
-    Printf.printf "%-16s %s %d\n" car_name car_model car_year
+    Printf.printf "%-13s %-16s %d\n" car_name car_model car_year
   in
   List.iteri show_leaderboard_pos r.result.leaderboard;
   flush stdout
