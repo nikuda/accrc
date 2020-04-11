@@ -1,4 +1,4 @@
 (executable
  (name main)
  (public_name accrc)
- (libraries unix uutf yojson sqlite3))
+ (libraries unix cmdliner uutf yojson sqlite3))

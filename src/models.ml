@@ -119,26 +119,27 @@ module Track = struct
   let fmt =
     format_of_string "%s %d"
 
+  let to_tuple track =
+    match track with
+    | Monza year -> ("Monza", year)
+    | Zolder year -> ("Zolder", year)
+    | BrandsHatch year -> ("Brands Hatch", year)
+    | Silverstone year -> ("Silverstone", year)
+    | PaulRicard year -> ("Paul Ricard", year)
+    | Misano year -> ("Misano", year)
+    | Spa year -> ("Spa-Francorchamps", year)
+    | Nurburgring year -> ("Nürburgring", year)
+    | Barcelona year -> ("Barcelona", year)
+    | Hungaroring year -> ("Hungaroring", year)
+    | Zandvoort year -> ("Zandvoort", year)
+    | Kyalami year -> ("Kyalami", year)
+    | MountPanorama year -> ("Mount Panorama", year)
+    | Suzuka year -> ("Suzuka", year)
+    | LagunaSeca year -> ("Laguna Seca", year)
+
   let to_string track =
-    let name, year =
-      match track with
-      | Monza year -> ("Monza", year)
-      | Zolder year -> ("Zolder", year)
-      | BrandsHatch year -> ("Brands Hatch", year)
-      | Silverstone year -> ("Silverstone", year)
-      | PaulRicard year -> ("Paul Ricard", year)
-      | Misano year -> ("Misano", year)
-      | Spa year -> ("Spa-Francorchamps", year)
-      | Nurburgring year -> ("Nürburgring", year)
-      | Barcelona year -> ("Barcelona", year)
-      | Hungaroring year -> ("Hungaroring", year)
-      | Zandvoort year -> ("Zandvoort", year)
-      | Kyalami year -> ("Kyalami", year)
-      | MountPanorama year -> ("Mount Panorama", year)
-      | Suzuka year -> ("Suzuka", year)
-      | LagunaSeca year -> ("Laguna Seca", year)
-    in
-    Printf.sprintf fmt name year
+    let name, year = to_tuple track
+    in Printf.sprintf fmt name year
 
   let parse json =
     json |> member "trackName" |> Yojson.Basic.Util.to_string |> from_string

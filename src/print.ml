@@ -4,9 +4,9 @@ open SessionResult
 open Leaderboard
 open Driver
 
-let show_time ms =
-  let (m, s, ms) = (ms / 60000, (ms mod 60000) / 1000, ms mod 1000) in
-  string_of_int m ^ ":" ^ string_of_int s ^ ":" ^ string_of_int ms
+let show_time sec =
+  let (m, s, ms) = (sec / 60000, (sec mod 60000) / 1000, sec mod 1000) in
+  Printf.sprintf "%0d:%0d:%0d" m s ms
 
 let show_pos pos =
   let p = pos + 1 in
@@ -18,16 +18,21 @@ let show_pos pos =
     String.concat "" [" "; pad_p; ".  "]
 
 let show_title r =
-  let weather = if r.result.SessionResult.is_wet_session then " - WET" else "" in
-  Printf.printf "%s - %s" (Track.to_string r.track) (SessionType.to_string r.session_type);
-  Printf.printf "%s - %s\n" weather (Utils.string_of_tm (snd r.time))
+  let track_name, track_year = Track.to_tuple r.track in
+  let weather = if r.result.SessionResult.is_wet_session then "WET" else "" in
+  Printf.printf "%s -- " (Utils.string_of_tm (snd r.time));
+  Printf.printf "%-12s %d - %s %s\n"
+    track_name track_year (SessionType.to_string r.session_type) weather;
+  flush stdout
 
 let show_best_lap r =
-  Printf.printf "Best lap: %s\n" (show_time r.result.best_lap)
+  Printf.printf "Best lap: %s\n" (show_time r.result.best_lap);
+  flush stdout
 
 let show_best_splits r =
   let show_best_split i t = Printf.printf "Best S%d: %s\n" (i + 1) (show_time t) in
-  List.iteri show_best_split r.result.best_splits
+  List.iteri show_best_split r.result.best_splits;
+  flush stdout
 
 let show_leaderboard r =
   let show_leaderboard_pos i c =
@@ -38,11 +43,11 @@ let show_leaderboard r =
     Printf.printf "%-10s" (CupCategory.to_string c.cup_category);
     Printf.printf "%-16s %s %d\n" car_name car_model car_year
   in
-  List.iteri show_leaderboard_pos r.result.leaderboard
+  List.iteri show_leaderboard_pos r.result.leaderboard;
+  flush stdout
 
 let show_result r =
   show_title r;
   show_best_lap r;
   show_best_splits r;
-  show_leaderboard r;
-  flush stdout
+  show_leaderboard r

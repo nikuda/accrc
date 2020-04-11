@@ -50,25 +50,25 @@ let iter_files config file_cache file_name =
   | None ->
       let result = parse_result config file_name in
       Hashtbl.add file_cache file_name file_mtime;
-      print_string "NEW ---- ";
-      Print.show_result(result)
+      Printf.printf "[%s] " "NEW";
+      Print.show_result(result);
   | Some cur_file_mtime ->
       if cur_file_mtime < file_mtime
       then
         let result = parse_result config file_name in
         Hashtbl.replace file_cache file_name file_mtime;
-        print_string "UPDATE ---- ";
-        Print.show_title(result)
+        Printf.printf "[%s] " "UPD";
+        Print.show_title(result);
       else ()
 
 let read_files config file_cache =
   let dir = Sys.readdir config.dir_path in
   Array.iter (iter_files config file_cache) dir
 
-let watch config =
+let watch config poll_interval =
   let file_cache = Hashtbl.create 10000 in
   let rec loop () =
     read_files config file_cache;
-    Unix.sleep 10;
+    Unix.sleep poll_interval;
     loop ()
   in Config.x; loop ()
