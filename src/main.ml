@@ -1,20 +1,7 @@
 open Config
 
-(* type verb = Normal | Quiet | Verbose
-type copts = { debug : bool; verb : verb } *)
-(*
-let str = Printf.sprintf
-let opt_str sv = function None -> "None" | Some v -> str "Some(%s)" (sv v)
-let opt_str_str = opt_str (fun s -> s)
-let verb_str = function
-  | Normal -> "normal" | Quiet -> "quiet" | Verbose -> "verbose"
-
-let pr_copts oc copts = Printf.fprintf oc
-    "debug = %B\nverbosity = %s\n"
-    copts.debug (verb_str copts.verb) *)
-
-let init _ = Printf.printf
-    "Init"
+let init _ =
+  Data.init ()
 
 let watch copts interval =
   let poll_interval =

@@ -71,4 +71,4 @@ let watch config poll_interval =
     read_files config file_cache;
     Unix.sleep poll_interval;
     loop ()
-  in Config.x; loop ()
+  in loop ()
