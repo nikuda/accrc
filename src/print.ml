@@ -46,8 +46,11 @@ let show_leaderboard r =
   List.iteri show_leaderboard_pos r.result.leaderboard;
   flush stdout
 
-let show_result r =
+let show_result config r =
   show_title r;
-  show_best_lap r;
-  show_best_splits r;
-  show_leaderboard r
+  match config.Config.verb with
+  | Config.Verbose ->
+    show_best_lap r;
+    show_best_splits r;
+    show_leaderboard r;
+  | _ -> ()

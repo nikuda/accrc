@@ -1,14 +1,16 @@
 open Sqlite3
 
+type verb = Normal | Quiet | Verbose
+
 type config =
   { dir_path: string;
     sleep_time: int;
+    debug: bool;
+    verb: verb;
   }
 
-let config: config =
-  { dir_path = "./data/";
-    sleep_time = 10;
-  }
+let makeConfig debug verb =
+  { dir_path = "./data/"; sleep_time = 10; debug; verb; }
 
 let mydb = db_open "test.db"
 

@@ -1,8 +1,8 @@
 open Config
 
-type verb = Normal | Quiet | Verbose
-type copts = { debug : bool; verb : verb }
-
+(* type verb = Normal | Quiet | Verbose
+type copts = { debug : bool; verb : verb } *)
+(*
 let str = Printf.sprintf
 let opt_str sv = function None -> "None" | Some v -> str "Some(%s)" (sv v)
 let opt_str_str = opt_str (fun s -> s)
@@ -11,19 +11,19 @@ let verb_str = function
 
 let pr_copts oc copts = Printf.fprintf oc
     "debug = %B\nverbosity = %s\n"
-    copts.debug (verb_str copts.verb)
+    copts.debug (verb_str copts.verb) *)
 
-let init copts = Printf.printf
-    "%a" pr_copts copts
+let init _ = Printf.printf
+    "Init"
 
-let watch _ interval =
+let watch copts interval =
   let poll_interval =
     match interval with
       | Some v -> v
-      | None -> config.sleep_time
+      | None -> copts.sleep_time
   in
-  Printf.printf "Watching %s with %d sec interval\n" config.dir_path poll_interval;
-  Files.watch config poll_interval
+  Printf.printf "Watching %s with %d sec interval\n" copts.dir_path poll_interval;
+  Files.watch copts poll_interval
 
 let help _ man_format cmds topic = match topic with
 | None -> `Help (`Pager, None) (* help about the program. *)
@@ -53,7 +53,6 @@ let help_secs = [
 
 (* Options common to all commands *)
 
-let copts debug verb = { debug; verb }
 let copts_t =
   let docs = Manpage.s_common_options in
   let debug =
@@ -65,9 +64,9 @@ let copts_t =
     let quiet = Quiet, Arg.info ["q"; "quiet"] ~docs ~doc in
     let doc = "Give verbose output." in
     let verbose = Verbose, Arg.info ["v"; "verbose"] ~docs ~doc in
-    Arg.(last & vflag_all [Normal] [quiet; verbose])
+    Arg.(last & vflag_all [Config.Normal] [quiet; verbose])
   in
-  Term.(const copts $ debug $ verb)
+  Term.(const Config.makeConfig $ debug $ verb)
 
 (* Commands *)
 

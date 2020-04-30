@@ -51,7 +51,7 @@ let iter_files config file_cache file_name =
       let result = parse_result config file_name in
       Hashtbl.add file_cache file_name file_mtime;
       Printf.printf "[%s] " "NEW";
-      Print.show_result(result);
+      Print.show_result config result;
   | Some cur_file_mtime ->
       if cur_file_mtime < file_mtime
       then
