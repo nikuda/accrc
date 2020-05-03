@@ -1,4 +1,6 @@
 open Sqlite3
+
+open Utils
 open Models
 open Session
 
@@ -14,7 +16,7 @@ let query config queries  =
 let create_table_sessions =
   "CREATE TABLE sessions (
     id INTEGER PRIMARY KEY,
-    datetime DATETIME NOT NULL,
+    datetime DATETIME UNIQUE NOT NULL,
     updated DATETIME NOT NULL
   );"
 
@@ -35,10 +37,18 @@ let init config =
 
 (* Insert *)
 
-let insert_sessions datetime  =
-  Printf.sprintf "INSERT INTO sessions (datetime, updated) VALUES(%f, %f)" datetime datetime
+let insert_sessions datetime updated =
+  Printf.sprintf
+    "INSERT INTO sessions (datetime, updated)
+     VALUES(
+      \"%s\",
+      \"%s\"
+    );"
+    datetime updated
 
-let add_result config result =
-  let add_query = (insert_sessions (fst result.time) ) in
+let add_result config result file_mtime =
+  let datetime = Time.string_of_tm (snd result.time) in
+  let updated = Time.string_of_tm (Time.tm_of_mtime (Unix.localtime file_mtime)) in
+  let add_query = insert_sessions datetime updated in
   print_endline add_query;
   query config [add_query]

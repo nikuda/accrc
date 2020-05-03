@@ -1,3 +1,4 @@
+open Utils
 open Models
 open Session
 open SessionResult
@@ -28,7 +29,7 @@ let show_pos pos =
 let show_title r =
   let track_name, track_year = Track.to_tuple r.track in
   let weather = if r.result.SessionResult.is_wet_session then "WET" else "" in
-  Printf.printf "%s -- " (Utils.string_of_tm (snd r.time));
+  Printf.printf "%s -- " (Time.string_of_tm (snd r.time));
   Printf.printf "%-12s %d - %s %s\n"
     track_name track_year (SessionType.to_string r.session_type) weather;
   flush stdout

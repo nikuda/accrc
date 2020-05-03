@@ -1,4 +1,5 @@
 open Yojson.Basic.Util
+open Utils
 
 module Car = struct
   type t =
@@ -280,6 +281,6 @@ module Session = struct
     let session_type = SessionType.parse json in
     let track = Track.parse json in
     let result = SessionResult.parse json in
-    let time = Utils.epoch_seconds filename in
+    let time = Time.tm_of_filename filename in
     create index session_type track result time
 end

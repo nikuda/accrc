@@ -30,4 +30,5 @@ _opam/
 
 
 # ACCRC specifc
+.DS_Store
 accrc.db
