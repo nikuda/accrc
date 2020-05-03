@@ -4,6 +4,14 @@ open SessionResult
 open Leaderboard
 open Driver
 
+let show_debug config msg =
+  if
+    config.Config.debug
+  then
+    print_endline msg
+  else
+    ()
+
 let show_time sec =
   let (m, s, ms) = (sec / 60000, (sec mod 60000) / 1000, sec mod 1000) in
   Printf.sprintf "%d:%02d:%03d" m s ms

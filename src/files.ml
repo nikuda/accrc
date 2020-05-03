@@ -50,6 +50,7 @@ let iter_files config file_cache file_name =
   | None ->
       let result = parse_result config file_name in
       Hashtbl.add file_cache file_name file_mtime;
+      Data.add_result config result;
       Printf.printf "[%s] " "NEW";
       Print.show_result config result;
   | Some cur_file_mtime ->

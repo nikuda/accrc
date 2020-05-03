@@ -1,7 +1,7 @@
 open Config
 
-let init _ =
-  Data.init ()
+let init copts =
+  Data.init copts
 
 let watch copts interval =
   let poll_interval =
