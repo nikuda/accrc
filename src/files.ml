@@ -36,7 +36,7 @@ let open_file str =
     raise e
 
 let get_path config file =
-  String.concat "" [config.dir_path; file]
+  Filename.concat config.dir_path file
 
 let parse_result config file =
   let file_string = open_file (get_path config file) in
