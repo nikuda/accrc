@@ -181,6 +181,13 @@ module SessionType = struct
     | _ -> failwith ("Unknown session type: " ^ str)
 
   let to_string session_type =
+    let t, n = match session_type with
+    | Race n -> ("R", n)
+    | Qualifying n -> ("Q", n)
+    | Practice n -> ("P", n)
+    in Printf.sprintf "%s%d" t n
+
+  let to_pp_string session_type =
     let show_num n = if n > 0 then " " ^ string_of_int n else "" in
     match session_type with
     | Race n -> "Race" ^ show_num n
@@ -275,8 +282,8 @@ module Session = struct
     time: float * Unix.tm
   }
 
-  let create name meta index session_type track result time =
-    { name; meta; index; session_type; track; result; time }
+  let create name meta index track session_type result time =
+    { name; meta; index; track; session_type; result; time }
 
   let parse filename json =
     let name = json |> member "serverName" |> to_string in
@@ -286,5 +293,5 @@ module Session = struct
     let track = Track.parse json in
     let result = SessionResult.parse json in
     let time = Time.tm_of_filename filename in
-    create name meta index session_type track result time
+    create name meta index track session_type result time
 end

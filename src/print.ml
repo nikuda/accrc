@@ -31,7 +31,7 @@ let show_title r =
   let weather = if r.result.SessionResult.is_wet_session then "WET" else "" in
   Printf.printf "%s -- " (Time.string_of_tm (snd r.time));
   Printf.printf "%-12s %d - %s %s\n"
-    track_name track_year (SessionType.to_string r.session_type) weather;
+    track_name track_year (SessionType.to_pp_string r.session_type) weather;
   flush stdout
 
 let show_best_lap r =
