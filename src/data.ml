@@ -15,19 +15,19 @@ let query config queries  =
 (* Core tables *)
 
 let create_table_series =
-  "CREATE TABLE series (
+  "CREATE TABLE IF NOT EXISTS series (
     id INTEGER PRIMARY KEY,
     name TEXT UNIQUE NOT NULL
   );"
 
 let create_table_events =
-  "CREATE TABLE events (
+  "CREATE TABLE IF NOT EXISTS events (
     id INTEGER PRIMARY KEY,
     name TEXT UNIQUE NOT NULL
   );"
 
 let create_table_sessions =
-  "CREATE TABLE sessions (
+  "CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY,
     type TEXT NOT NULL,
     started DATETIME UNIQUE NOT NULL,
@@ -35,7 +35,7 @@ let create_table_sessions =
   );"
 
 let create_table_drivers =
-  "CREATE TABLE drivers (
+  "CREATE TABLE IF NOT EXISTS drivers (
     id INTEGER PRIMARY KEY,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
@@ -46,7 +46,7 @@ let create_table_drivers =
 (* Assoc tables *)
 
 let create_table_series_events =
-  "CREATE TABLE series_events (
+  "CREATE TABLE IF NOT EXISTS series_events (
     id INTEGER PRIMARY KEY,
     series INTEGER NOT NULL,
     event INTEGER NOT NULL,
@@ -55,7 +55,7 @@ let create_table_series_events =
   );"
 
 let create_table_events_sessions =
-  "CREATE TABLE events_sessions (
+  "CREATE TABLE IF NOT EXISTS events_sessions (
     id INTEGER PRIMARY KEY,
     event INTEGER NOT NULL,
     session INTEGER NOT NULL,
