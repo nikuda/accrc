@@ -43,23 +43,26 @@ let parse_result config file =
   let json = Yojson.Basic.from_string file_string in
   Session.parse file json
 
+let add config file_cache file_name file_stat =
+  let result = parse_result config file_name in
+  Hashtbl.add file_cache file_name file_stat.Unix.st_mtime;
+  Data.add_result config result file_stat.Unix.st_mtime;
+  Printf.printf "[%s] " "NEW";
+  Print.show_result config result
+
+let update config file_cache file_name file_stat =
+  let result = parse_result config file_name in
+  Hashtbl.replace file_cache file_name file_stat.Unix.st_mtime;
+  Printf.printf "[%s] " "UPD";
+  Print.show_title(result)
+
 let iter_files config file_cache file_name =
   let file_stat = Unix.stat (get_path config file_name) in
-  let file_mtime = file_stat.st_mtime in
   match Hashtbl.find_opt file_cache file_name with
-  | None ->
-      let result = parse_result config file_name in
-      Hashtbl.add file_cache file_name file_mtime;
-      Data.add_result config result file_mtime;
-      Printf.printf "[%s] " "NEW";
-      Print.show_result config result;
+  | None -> add config file_cache file_name file_stat;
   | Some cur_file_mtime ->
-      if cur_file_mtime < file_mtime
-      then
-        let result = parse_result config file_name in
-        Hashtbl.replace file_cache file_name file_mtime;
-        Printf.printf "[%s] " "UPD";
-        Print.show_title(result);
+      if cur_file_mtime < file_stat.Unix.st_mtime
+      then update config file_cache file_name file_stat
       else ()
 
 let read_files config file_cache =
