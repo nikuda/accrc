@@ -48,7 +48,7 @@ let insert_sessions datetime updated =
 
 let add_result config result file_mtime =
   let datetime = Time.string_of_tm (snd result.time) in
-  let updated = Time.string_of_tm (Time.tm_of_mtime (Unix.localtime file_mtime)) in
+  let updated = Time.string_of_tm (Unix.localtime file_mtime) in
   let add_query = insert_sessions datetime updated in
-  print_endline add_query;
+  if config.Config.debug then print_endline add_query else ();
   query config [add_query]
