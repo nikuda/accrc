@@ -18,7 +18,7 @@ let create_table_sessions =
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     meta TEXT NOT NULL,
-    datetime DATETIME UNIQUE NOT NULL,
+    started DATETIME UNIQUE NOT NULL,
     updated DATETIME NOT NULL
   );"
 
@@ -39,20 +39,20 @@ let init config =
 
 (* Insert *)
 
-let insert_sessions datetime updated =
+let insert_sessions started updated =
   Printf.sprintf
-    "INSERT INTO sessions (name, meta, datetime, updated)
+    "INSERT INTO sessions (name, meta, started, updated)
      VALUES(
       \"%s\",
       \"%s\",
       \"%s\",
       \"%s\"
     );"
-    datetime updated
+    started updated
 
 let add_result config result file_mtime =
-  let datetime = Time.string_of_tm (snd result.time) in
+  let started = Time.string_of_tm (snd result.time) in
   let updated = Time.string_of_tm (Unix.localtime file_mtime) in
-  let add_query = insert_sessions result.name result.meta datetime updated in
+  let add_query = insert_sessions result.name result.meta started updated in
   if config.Config.debug then print_endline add_query else ();
   query config [add_query]
