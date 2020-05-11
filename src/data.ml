@@ -48,19 +48,21 @@ let create_table_drivers =
 let create_table_series_events =
   "CREATE TABLE IF NOT EXISTS series_events (
     id INTEGER PRIMARY KEY,
-    series INTEGER NOT NULL,
-    event INTEGER NOT NULL,
-    FOREIGN KEY(series) REFERENCES series(id),
-    FOREIGN KEY(event) REFERENCES events(id)
+    series_id INTEGER NOT NULL,
+    event_id INTEGER NOT NULL,
+    FOREIGN KEY(series_id) REFERENCES series(id),
+    FOREIGN KEY(event_id) REFERENCES events(id),
+    UNIQUE(series_id, event_id)
   );"
 
 let create_table_events_sessions =
   "CREATE TABLE IF NOT EXISTS events_sessions (
     id INTEGER PRIMARY KEY,
-    event INTEGER NOT NULL,
-    session INTEGER NOT NULL,
-    FOREIGN KEY(event) REFERENCES events(id),
-    FOREIGN KEY(session) REFERENCES sessions(id)
+    event_id INTEGER NOT NULL,
+    session_id INTEGER NOT NULL,
+    FOREIGN KEY(event_id) REFERENCES events(id),
+    FOREIGN KEY(session_id) REFERENCES sessions(id),
+    UNIQUE(event_id, session_id)
   );"
 
 (* Init *)
@@ -84,23 +86,49 @@ let init config =
 let insert_series =
   Printf.sprintf
     "INSERT INTO series (name)
-      VALUES(\"%s\")
-      ON CONFLICT(name) DO NOTHING;"
+    VALUES(\"%s\")
+    ON CONFLICT(name) DO NOTHING;"
 
 let insert_events =
   Printf.sprintf
     "INSERT INTO events (name)
-      VALUES(\"%s\")
-      ON CONFLICT(name) DO NOTHING;"
+    VALUES(\"%s\")
+    ON CONFLICT(name) DO NOTHING;"
 
 let insert_sessions =
   Printf.sprintf
     "INSERT INTO sessions (type, started, updated)
-     VALUES(
+    VALUES(
       \"%s\",
       \"%s\",
       \"%s\"
-    );"
+    )
+    ON CONFLICT(started) DO NOTHING;"
+
+let insert_series_events =
+  Printf.sprintf
+    "INSERT INTO series_events (series_id, event_id)
+    VALUES(
+      (SELECT id FROM \"series\" WHERE name = \"%s\"),
+      (SELECT id FROM \"events\" WHERE name = \"%s\")
+    )
+    ON CONFLICT DO NOTHING;"
+
+let insert_events_sessions =
+  Printf.sprintf
+    "INSERT INTO events_sessions (event_id, session_id)
+    VALUES(
+      (SELECT id FROM \"events\" WHERE name = \"%s\"),
+      (SELECT id FROM \"sessions\" WHERE started = \"%s\")
+    )
+    ON CONFLICT DO NOTHING;"
+
+let transaction queries =
+  let query = String.concat "\n" queries in
+  Printf.sprintf
+    "BEGIN TRANSACTION;
+    %s
+    COMMIT;" query
 
 let add_result config result file_mtime =
   let started = Time.string_of_tm (snd result.time) in
@@ -111,4 +139,11 @@ let add_result config result file_mtime =
     (SessionType.to_string result.session_type)
     started updated
   in
-  query config [add_series_query; add_events_query; add_sessions_query]
+  let add_series_events_query = insert_series_events result.meta result.name in
+  let add_events_sessions_query = insert_events_sessions result.name started in
+  let t = transaction [
+    add_series_query; add_events_query; add_sessions_query;
+    add_series_events_query; add_events_sessions_query
+    ]
+  in
+  query config [t]
