@@ -266,6 +266,8 @@ end
 
 module Session = struct
   type t = {
+    name: string;
+    meta: string;
     index: int;
     track : Track.t;
     session_type : SessionType.t;
@@ -273,14 +275,16 @@ module Session = struct
     time: float * Unix.tm
   }
 
-  let create index session_type track result time =
-    { index; session_type; track; result; time }
+  let create name meta index session_type track result time =
+    { name; meta; index; session_type; track; result; time }
 
   let parse filename json =
+    let name = json |> member "serverName" |> to_string in
+    let meta = json |> member "metaData" |> to_string in
     let index = json |> member "sessionIndex" |> to_int in
     let session_type = SessionType.parse json in
     let track = Track.parse json in
     let result = SessionResult.parse json in
     let time = Time.tm_of_filename filename in
-    create index session_type track result time
+    create name meta index session_type track result time
 end
