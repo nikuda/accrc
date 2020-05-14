@@ -1,6 +1,6 @@
 with import <nixpkgs> {};
 
-stdenv.mkDerivation rec {
+pkgsStatic.stdenv.mkDerivation rec {
   name = "acc";
 
   buildInputs = [
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     pkgs.opam
     pkgs.ocamlPackages.utop
     pkgs.pkg-config
-    pkgs.sqlite
+    pkgsStatic.sqlite.dev
   ];
 
   shellHook = ''

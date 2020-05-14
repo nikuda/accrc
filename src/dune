@@ -1,4 +1,9 @@
 (executable
  (name main)
  (public_name accrc)
- (libraries unix cmdliner uutf yojson sqlite3))
+ (libraries unix cmdliner uutf yojson sqlite3)
+ (flags (:standard -ccopt (:include c_flags.sexp))))
+
+(rule
+ (targets c_flags.sexp)
+ (action  (run ../config/discover.exe)))

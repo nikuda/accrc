@@ -147,3 +147,11 @@ let add_result config result file_mtime =
     ]
   in
   query config [t]
+
+(* Select *)
+
+let select_all_test =
+  "SELECT s.name, e.name, ss.type FROM series_events as se, events_sessions as es
+  JOIN series as s ON se.series_id = s.id
+  JOIN events as e ON se.event_id = e.id
+  JOIN sessions as ss ON se.event_id = es.event_id AND ss.id = es.session_id;"
