@@ -45,12 +45,12 @@ let show_best_splits r =
 
 let show_leaderboard r =
   let show_leaderboard_pos i c =
-    let driver_full_name = c.driver.first_name ^ " " ^ c.driver.last_name in
-    let car_name, car_model, car_year = Car.to_tuple c.car_model in
-    Printf.printf "%3d. %-24s" (i + 1) driver_full_name;
-    Printf.printf "%s %3d " c.driver.short_name c.car_number;
-    Printf.printf "%-10s" (CupCategory.to_string c.cup_category);
-    Printf.printf "%-13s %-16s %d\n" car_name car_model car_year
+    let driver_full_name = Printf.sprintf "%s %s" c.driver.first_name c.driver.last_name in
+    let car_name, car_model, _ = Car.to_tuple c.car_model in
+    Printf.printf "%3d. %3d " (i + 1) c.car_number;
+    Printf.printf "%s %-24s" c.driver.short_name driver_full_name;
+    Printf.printf "%-13s %-16s " car_name car_model;
+    Printf.printf "%-10s\n" (CupCategory.to_string c.cup_category)
   in
   List.iteri show_leaderboard_pos r.result.leaderboard;
   flush stdout
