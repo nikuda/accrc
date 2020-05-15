@@ -1,0 +1,140 @@
+Track: Atorp             Sun Oct 28 02:01:20 2001
+
+RACE RESULTS (After 80 laps)
+
+Pos No Driver                          Team     Nat Laps   Race Time       Diff
+ 1   6 Christophe Galleron             Lotus    FRA   80 129m46.994s
+ 2  18 Chris Darkes                    Eagle    GBR   80 130m06.273s    19.279s
+ 3  20 Jure Kalisnik                   Ferrari  USA   80 130m12.114s    25.120s
+ 4   7 Johnny Ackerman                 Eagle    USA   80 130m53.875s  1m06.881s
+ 5  12 Alex Cameron                    Cooper   GBR   79 130m30.256s   1 lap(s)
+ 6  19 Lx Martini                      Honda    RSA   78 130m06.801s   2 lap(s)
+ 7  10 Petter Edin                     BRM      SWE   78 130m22.245s   2 lap(s)
+ 8  11 Frank Hagström                  BRM      SWE   78 130m58.826s   2 lap(s)
+ 9   8 Rob Rideout                     Honda    USA   77 131m09.525s   3 lap(s)
+10   2 Martin Granberg                 Ferrari  SWE   64 105m38.842s  16 lap(s)
+11  15 Zoltan Balint                   Eagle    IRE   57  93m01.716s  23 lap(s)
+12  16 Brian Balgobind                 Brabham  HOL   52  84m38.148s  28 lap(s)
+13   9 AJ Medvitz                      Brabham  USA   49  81m42.181s  31 lap(s)
+14   3 Eric Sheehan                    Cooper   USA   47  78m11.251s  33 lap(s)
+15  14 Jon Andersen                    Ferrari  FIN   44  72m45.399s  36 lap(s)
+16  17 Larry Heir                      Lotus    USA   34  56m27.986s  46 lap(s)
+17  13 Dirk Muessener                  Brabham  GER   29  47m37.033s  51 lap(s)
+18   4 Guy Wilson                      Brabham  USA    0 DidNotStart  80 lap(s)
+
+
+Race results are unofficial
+(Replay might have been saved before end of race)
+
+RACE FASTEST LAPS
+
+Pos Driver                                 Time Lap
+ 1  Jure Kalisnik                     1m35.673s  64
+ 2  Chris Darkes                      1m35.681s  78
+ 3  Christophe Galleron               1m35.851s  78
+ 4  Brian Balgobind                   1m36.140s  37
+ 5  Alex Cameron                      1m36.243s  46
+ 6  Zoltan Balint                     1m36.290s  50
+ 7  Johnny Ackerman                   1m36.389s  62
+ 8  Dirk Muessener                    1m36.913s  19
+ 9  Jon Andersen                      1m37.109s  38
+10  Eric Sheehan                      1m37.227s  22
+11  Martin Granberg                   1m37.281s  33
+12  Larry Heir                        1m37.491s  30
+13  Lx Martini                        1m37.601s   8
+14  Petter Edin                       1m37.773s  32
+15  Frank Hagström                    1m37.843s  73
+16  AJ Medvitz                        1m38.006s  32
+17  Rob Rideout                       1m39.060s  30
+18  Guy Wilson                          No time
+
+
+LEADERS
+
+Driver                           Laps
+Zoltan Balint                    1-5
+Christophe Galleron              6-80
+
+Number of lead changes: 1
+Number of leaders: 2
+
+
+LAPS LED
+
+Driver                           Laps led
+Christophe Galleron              75
+Zoltan Balint                    5
+
+
+HIGHEST CLIMBER
+
+Driver                           Start Finish  Change
+Jure Kalisnik                       17      3      14
+Petter Edin                         15      7       8
+Lx Martini                          13      6       7
+Rob Rideout                         16      9       7
+Frank Hagström                      14      8       6
+Chris Darkes                         5      2       3
+Christophe Galleron                  3      1       2
+Alex Cameron                         6      5       1
+Guy Wilson                          18     18       0
+AJ Medvitz                          12     13      -1
+Johnny Ackerman                      2      4      -2
+Eric Sheehan                        11     14      -3
+Brian Balgobind                      7     12      -5
+Martin Granberg                      4     10      -6
+Larry Heir                          10     16      -6
+Jon Andersen                         8     15      -7
+Dirk Muessener                       9     17      -8
+Zoltan Balint                        1     11     -10
+
+
+ON TRACK LAPS
+
+Driver                           Laps/Total    Percent
+Chris Darkes                        (78/80)      97.50
+Christophe Galleron                 (72/80)      90.00
+Johnny Ackerman                     (69/80)      86.25
+Alex Cameron                        (64/79)      81.01
+Frank Hagström                      (63/78)      80.77
+Petter Edin                         (58/78)      74.36
+Jure Kalisnik                       (57/80)      71.25
+Rob Rideout                         (53/77)      68.83
+Zoltan Balint                       (51/57)      89.47
+Martin Granberg                     (50/64)      78.13
+Brian Balgobind                     (41/52)      78.85
+AJ Medvitz                          (41/49)      83.67
+Eric Sheehan                        (40/47)      85.11
+Jon Andersen                        (39/44)      88.64
+Larry Heir                          (31/34)      91.18
+Dirk Muessener                      (26/29)      89.66
+Lx Martini                          (21/78)      26.92
+
+
+RACE LAPTIME CONSISTENCY
+(first lap excluded)
+
+Driver                    Avg Deviation  Std Deviation  Avg Laptime   Laps
+Chris Darkes                      0.563          0.908    1m37.453s     80
+Dirk Muessener                    0.641          0.861    1m38.088s     29
+Christophe Galleron               0.746          1.288    1m37.265s     80
+Zoltan Balint                     0.800          1.231    1m37.846s     57
+Brian Balgobind                   0.931          1.835    1m37.487s     52
+Jure Kalisnik                     0.961          1.496    1m37.339s     80
+Larry Heir                        1.038          2.053    1m39.073s     34
+Jon Andersen                      1.073          1.487    1m38.661s     44
+Johnny Ackerman                   1.090          2.013    1m38.077s     80
+Martin Granberg                   1.358          2.079    1m38.901s     64
+Petter Edin                       1.435          2.990    1m40.047s     78
+AJ Medvitz                        1.523          2.705    1m39.720s     49
+Lx Martini                        1.892          3.326    1m39.906s     78
+Eric Sheehan                      1.938          3.696    1m39.520s     47
+Frank Hagström                    2.191          3.862    1m40.543s     78
+Rob Rideout                       2.286          3.725    1m42.017s     77
+Alex Cameron                      2.834          6.041    1m38.987s     79
+
+
+All times are unofficial
+(Replay might have been saved before end of race)
+
+Generated with GPL Replay Analyser

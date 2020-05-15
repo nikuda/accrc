@@ -24,7 +24,8 @@ let create_table_events =
   "CREATE TABLE IF NOT EXISTS events (
     id INTEGER PRIMARY KEY,
     series_id INTEGER NOT NULL,
-    name TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    started DATETIME UNIQUE NOT NULL,
     FOREIGN KEY(series_id) REFERENCES series(id)
   );"
 
@@ -71,12 +72,12 @@ let insert_series =
 
 let insert_events =
   Printf.sprintf
-    "INSERT INTO events (series_id, name)
+    "INSERT INTO events (series_id, name, started)
     VALUES(
       (SELECT id FROM \"series\" WHERE name = \"%s\"),
+      \"%s\",
       \"%s\"
-    )
-    ON CONFLICT(name) DO NOTHING;"
+    );"
 
 let insert_sessions =
   Printf.sprintf
@@ -99,16 +100,21 @@ let transaction queries =
 let add_result config result file_mtime =
   let started = Time.string_of_tm (snd result.time) in
   let updated = Time.string_of_tm (Unix.localtime file_mtime) in
-  let add_series_query = insert_series result.meta in
-  let add_events_query = insert_events result.meta result.name in
   let add_sessions_query = insert_sessions
     result.name
     (SessionType.to_string result.session_type)
     started updated
   in
-  let t = transaction
-    [ add_series_query; add_events_query; add_sessions_query; ]
+  let t_queries =
+    if result.index = 0 then
+      begin
+        let add_series_query = insert_series result.meta in
+        let add_events_query = insert_events result.meta result.name started in
+        [ add_series_query; add_events_query; add_sessions_query; ]
+      end
+    else [ add_sessions_query; ]
   in
+  let t = transaction t_queries in
   query config [t]
 
 (* Select *)

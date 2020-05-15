@@ -67,6 +67,7 @@ let iter_files config file_cache file_name =
 
 let read_files config file_cache =
   let dir = Sys.readdir config.dir_path in
+  Array.sort compare dir;
   Array.iter (iter_files config file_cache) dir
 
 let watch config poll_interval =
