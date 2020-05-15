@@ -34,9 +34,10 @@ let show_log t r =
 
 let show_session_info r =
   let track_name, track_year = Track.to_tuple r.track in
+  let datetime = Time.string_of_tm (snd r.time) in
   let weather = if r.result.SessionResult.is_wet_session then " (WET)" else "" in
-  Printf.printf "\n Track: %s %d%s\n\n" track_name track_year weather
-
+  Printf.printf "\n Track: %s %d%s    %s\n\n" track_name track_year weather datetime
+ 
 let show_session_bests r =
   let show_best_split i t = Printf.printf "S%d %s    " (i + 1) (show_time t) in
   Printf.printf "  Best:    LAP %s    " (show_time r.result.best_lap);
