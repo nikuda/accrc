@@ -48,13 +48,14 @@ let add config file_cache file_name file_stat =
   Hashtbl.add file_cache file_name file_stat.Unix.st_mtime;
   Data.add_result config result file_stat.Unix.st_mtime;
   Printf.printf "[%s] " "NEW";
+  Print.show_log (Unix.localtime file_stat.Unix.st_mtime) result;
   Print.show_result config result
 
 let update config file_cache file_name file_stat =
   let result = parse_result config file_name in
   Hashtbl.replace file_cache file_name file_stat.Unix.st_mtime;
   Printf.printf "[%s] " "UPD";
-  Print.show_title(result)
+  Print.show_log (Unix.localtime file_stat.Unix.st_mtime) result 
 
 let iter_files config file_cache file_name =
   let file_stat = Unix.stat (get_path config file_name) in

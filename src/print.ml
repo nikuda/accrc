@@ -26,21 +26,22 @@ let show_pos pos =
   in
     String.concat "" [" "; pad_p; ".  "]
 
-let show_title r =
+let show_log t r =
+  let track_name, _ = Track.to_tuple r.track in
+  Printf.printf "%s - " (Time.string_of_tm t);
+  Printf.printf "%s - %s\n"  (SessionType.to_string r.session_type) track_name;
+  flush stdout
+
+let show_session_info r =
   let track_name, track_year = Track.to_tuple r.track in
-  let weather = if r.result.SessionResult.is_wet_session then "WET" else "" in
-  Printf.printf "%s -- " (Time.string_of_tm (snd r.time));
-  Printf.printf "%-12s %d - %s %s\n"
-    track_name track_year (SessionType.to_pp_string r.session_type) weather;
-  flush stdout
+  let weather = if r.result.SessionResult.is_wet_session then " (WET)" else "" in
+  Printf.printf "\n Track: %s %d%s\n\n" track_name track_year weather
 
-let show_best_lap r =
-  Printf.printf "Best lap: %s\n" (show_time r.result.best_lap);
-  flush stdout
-
-let show_best_splits r =
-  let show_best_split i t = Printf.printf "Best S%d: %s\n" (i + 1) (show_time t) in
+let show_session_bests r =
+  let show_best_split i t = Printf.printf "S%d %s    " (i + 1) (show_time t) in
+  Printf.printf "  Best:    LAP %s    " (show_time r.result.best_lap);
   List.iteri show_best_split r.result.best_splits;
+  print_endline "";
   flush stdout
 
 let show_leaderboard r =
@@ -52,14 +53,15 @@ let show_leaderboard r =
     Printf.printf "%-13s %-16s " car_name car_model;
     Printf.printf "%-10s\n" (CupCategory.to_string c.cup_category)
   in
+  print_endline "";
   List.iteri show_leaderboard_pos r.result.leaderboard;
+  print_endline "";
   flush stdout
 
 let show_result config r =
-  show_title r;
   match config.Config.verb with
   | Config.Verbose ->
-    show_best_lap r;
-    show_best_splits r;
+    show_session_info r;
+    show_session_bests r;
     show_leaderboard r;
   | _ -> ()
