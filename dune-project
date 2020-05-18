@@ -11,6 +11,8 @@
  (synopsis "Assetto Corsa Competizione Race Control")
  (depends
   (dune (>= 2.5))
+  (dune-configurator (>= 2.5))
   (cmdliner (>= 1.0.4))
   (uutf (>= 1.0.2))
-  (yojson (>= 1.7.0))))
+  (yojson (>= 1.7.0))
+  (sqlite3 (>= 5.0))))
