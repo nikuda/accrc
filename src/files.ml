@@ -55,7 +55,7 @@ let update config file_cache file_name file_stat =
   let result = parse_result config file_name in
   Hashtbl.replace file_cache file_name file_stat.Unix.st_mtime;
   Printf.printf "[%s] " "UPD";
-  Print.show_log (Unix.localtime file_stat.Unix.st_mtime) result 
+  Print.show_log (Unix.localtime file_stat.Unix.st_mtime) result
 
 let iter_files config file_cache file_name =
   let file_stat = Unix.stat (get_path config file_name) in
@@ -70,6 +70,10 @@ let read_files config file_cache =
   let dir = Sys.readdir config.dir_path in
   Array.sort compare dir;
   Array.iter (iter_files config file_cache) dir
+
+let read config =
+  let file_cache = Hashtbl.create 10000 in
+  read_files config file_cache
 
 let watch config poll_interval =
   let file_cache = Hashtbl.create 10000 in

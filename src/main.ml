@@ -1,7 +1,8 @@
 open Config
 
-let init copts =
-  Data.init copts
+let init = Data.init
+
+let read = Files.read
 
 let watch copts interval =
   let poll_interval =
@@ -68,6 +69,17 @@ let init_cmd =
   Term.(const init $ copts_t),
   Term.info "init" ~doc ~sdocs:Manpage.s_common_options ~exits ~man
 
+let read_cmd =
+  let doc = "read log files" in
+  let exits = Term.default_exits in
+  let man = [
+    `S Manpage.s_description;
+    `P doc;
+    `Blocks help_secs; ]
+  in
+  Term.(const read $ copts_t),
+  Term.info "read" ~doc ~sdocs:Manpage.s_common_options ~exits ~man
+
 let watch_cmd =
   let interval =
     let doc = "Poll logfiles every INTERVAL seconds" in
@@ -107,6 +119,6 @@ let default_cmd =
   Term.(ret (const (fun _ -> `Help (`Pager, None)) $ copts_t)),
   Term.info "accrc" ~version:"v0.1.0" ~doc ~sdocs ~exits ~man
 
-let cmds = [init_cmd; watch_cmd; help_cmd]
+let cmds = [init_cmd; read_cmd; watch_cmd; help_cmd]
 
 let () = Term.(exit @@ eval_choice default_cmd cmds)

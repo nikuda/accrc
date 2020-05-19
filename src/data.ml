@@ -4,11 +4,13 @@ open Utils
 open Models
 open Session
 
-let query config queries  =
+let open_db () = db_open "accrc.db"
+
+let query config ?cb queries =
   let mydb = db_open "accrc.db" in
   let query = String.concat "\n" queries in
   if config.Config.debug then print_endline query else ();
-  match exec mydb query with
+  match exec mydb ?cb query with
   | Rc.OK -> Print.show_debug config "Ok"
   | r -> Print.show_debug config ((Rc.to_string r) ^ (errmsg mydb))
 
@@ -77,13 +79,14 @@ let insert_events =
       (SELECT id FROM \"series\" WHERE name = \"%s\"),
       \"%s\",
       \"%s\"
-    );"
+    )
+    ON CONFLICT DO NOTHING;"
 
 let insert_sessions =
   Printf.sprintf
     "INSERT INTO sessions (event_id, type, started, updated)
     VALUES(
-      (SELECT id FROM \"events\" WHERE name = \"%s\"),
+      (SELECT id FROM events ORDER BY id DESC LIMIT 1),
       \"%s\",
       \"%s\",
       \"%s\"
@@ -101,21 +104,23 @@ let add_result config result file_mtime =
   let started = Time.string_of_tm (snd result.time) in
   let updated = Time.string_of_tm (Unix.localtime file_mtime) in
   let add_sessions_query = insert_sessions
-    result.name
     (SessionType.to_string result.session_type)
-    started updated
+    started
+    updated
   in
-  let t_queries =
+  let queries, cb =
     if result.index = 0 then
       begin
         let add_series_query = insert_series result.meta in
         let add_events_query = insert_events result.meta result.name started in
-        [ add_series_query; add_events_query; add_sessions_query; ]
+        let cb row _ = Array.iter (fun opts ->
+          match opts with Some x -> print_endline x | None -> ()) row in
+        ([ add_series_query; add_events_query; add_sessions_query; ], Some cb)
       end
-    else [ add_sessions_query; ]
+    else ([ add_sessions_query; ], None)
   in
-  let t = transaction t_queries in
-  query config [t]
+  let t = transaction queries in
+  query config ?cb:cb [t]
 
 (* Select *)
 

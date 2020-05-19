@@ -1,6 +1,13 @@
 open Yojson.Basic.Util
 open Utils
 
+module State = struct
+  type state = { mutable last_session_id : int option }
+
+  let new_state = { last_session_id = None }
+  let set_last_session_id state id = state.last_session_id <- Some id
+end
+
 module Car = struct
   type t =
     | Porsche of string * int
