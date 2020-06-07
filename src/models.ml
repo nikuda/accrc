@@ -192,7 +192,10 @@ module SessionType = struct
     | Race n -> ("R", n)
     | Qualifying n -> ("Q", n)
     | Practice n -> ("P", n)
-    in Printf.sprintf "%s%d" t n
+    in 
+    if n == 0 
+        then Printf.sprintf "%s" t
+        else Printf.sprintf "%s%d" t n
 
   let to_pp_string session_type =
     let show_num n = if n > 0 then " " ^ string_of_int n else "" in

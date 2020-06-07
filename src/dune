@@ -2,7 +2,7 @@
  (name main)
  (public_name accrc)
  (libraries unix cmdliner uutf yojson sqlite3)
- (flags (:standard -ccopt (:include c_flags.sexp))))
+ (flags (:standard -ccopt "-I/usr/local/include" -ccopt "-L/usr/local/lib" )))
 
 (rule
  (targets c_flags.sexp)

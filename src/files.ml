@@ -43,11 +43,29 @@ let parse_result config file =
   let json = Yojson.Basic.from_string file_string in
   Session.parse file json
 
+
+(* Cache *)
+
+let create_cache config =
+  let file_cache = Hashtbl.create 10000 in
+  let populate_cache row _ =
+    begin match row with
+    | [| t; s; u; |] -> Printf.printf " %s %s \n" 
+        (Utils.Time.to_filename (Option.value t ~default:"") (Option.value s ~default:""))
+        (Option.value u ~default:"")
+    | _ -> ()
+    end
+  in 
+  Data.get_sessions ?cb:(Some populate_cache) config;
+  file_cache
+
+
 let add config file_cache file_name file_stat =
   let result = parse_result config file_name in
   Hashtbl.add file_cache file_name file_stat.Unix.st_mtime;
   Data.add_result config result file_stat.Unix.st_mtime;
   Printf.printf "[%s] " "NEW";
+  Printf.printf " %s %.0f " file_name file_stat.Unix.st_mtime;
   Print.show_log (Unix.localtime file_stat.Unix.st_mtime) result;
   Print.show_result config result
 
@@ -71,12 +89,14 @@ let read_files config file_cache =
   Array.sort compare dir;
   Array.iter (iter_files config file_cache) dir
 
+(* Commands *)
+
 let read config =
-  let file_cache = Hashtbl.create 10000 in
+  let file_cache = create_cache config in
   read_files config file_cache
 
 let watch config poll_interval =
-  let file_cache = Hashtbl.create 10000 in
+  let file_cache = create_cache config in
   let rec loop () =
     read_files config file_cache;
     Unix.sleep poll_interval;

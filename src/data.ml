@@ -124,6 +124,12 @@ let add_result config result file_mtime =
 
 (* Select *)
 
+let select_sessions =
+  "SELECT type, strftime('%Y%m%d_%H%M%S', started), strftime('%s', updated) FROM sessions;"
+
+let get_sessions ?cb config = 
+  query config ?cb:cb [select_sessions]
+
 let select_all_test =
   "SELECT s.name, e.name, ss.type FROM series_events as se, events_sessions as es
   JOIN series as s ON se.series_id = s.id

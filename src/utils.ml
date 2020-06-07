@@ -4,7 +4,7 @@ module Time = struct
   let tm_of_filename filename =
     let to_tm yy mm dd hour min sec =
       Unix.mktime {tm_sec=sec; tm_min=min; tm_hour=hour;
-                   tm_mday=dd; tm_mon=mm; tm_year=(yy + 100);
+                   tm_mday=dd; tm_mon=(mm - 1); tm_year=(yy + 100);
                    tm_wday=0; tm_yday=0; tm_isdst=false}
     in Scanf.sscanf filename "%02d%02d%02d_%02d%02d%02d" to_tm
 
@@ -12,4 +12,7 @@ module Time = struct
     Printf.sprintf "%d-%02d-%02d %02d:%02d:%02d"
       (1900 + tm.tm_year) (tm.tm_mon + 1) tm.tm_mday
       tm.tm_hour tm.tm_min tm.tm_sec
+  
+  let to_filename t s = 
+    Printf.sprintf "%s_%s" (String.sub s 2 13) t
 end
