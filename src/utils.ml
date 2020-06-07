@@ -25,8 +25,8 @@ module Time = struct
         (tm.tm_year - 100) (tm.tm_mon + 1) tm.tm_mday
         tm.tm_hour tm.tm_min tm.tm_sec
     in 
-    Printf.sprintf "%s_%s" (to_str (snd (tm_of_datetime s))) t
+    Printf.sprintf "%s_%s.json" (to_str (snd (tm_of_datetime s))) t
 
-  let to_ms u = 
-    Printf.sprintf "%.0f" (fst (tm_of_datetime u))
+  let to_epoch u = 
+    fst (tm_of_datetime u)
 end

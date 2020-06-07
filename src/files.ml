@@ -48,24 +48,32 @@ let parse_result config file =
 
 let create_cache config =
   let file_cache = Hashtbl.create 10000 in
+  let add_to_cache t s u = 
+    let file_name = Utils.Time.to_filename 
+      (Option.value t ~default:"") 
+      (Option.value s ~default:"") 
+    in
+    let file_mtime = Utils.Time.to_epoch 
+      (Option.value u ~default:"") 
+    in 
+    Hashtbl.add file_cache file_name file_mtime;
+    Print.show_debug config 
+      @@ Printf.sprintf "[CACHE] filename %s mtime %f" file_name file_mtime
+  in 
   let populate_cache row _ =
     begin match row with
-    | [| t; s; u; |] -> Printf.printf " %s %s \n" 
-        (Utils.Time.to_filename (Option.value t ~default:"") (Option.value s ~default:""))
-        (Utils.Time.to_ms (Option.value u ~default:""))
+    | [| t; s; u; |] -> add_to_cache t s u
     | _ -> ()
     end
   in 
   Data.get_sessions ?cb:(Some populate_cache) config;
   file_cache
 
-
 let add config file_cache file_name file_stat =
   let result = parse_result config file_name in
   Hashtbl.add file_cache file_name file_stat.Unix.st_mtime;
   Data.add_result config result file_stat.Unix.st_mtime;
   Printf.printf "[%s] " "NEW";
-  Printf.printf " %s %.0f " file_name file_stat.Unix.st_mtime;
   Print.show_log (Unix.localtime file_stat.Unix.st_mtime) result;
   Print.show_result config result
 
