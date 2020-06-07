@@ -125,7 +125,7 @@ let add_result config result file_mtime =
 (* Select *)
 
 let select_sessions =
-  "SELECT type, strftime('%Y%m%d_%H%M%S', started), strftime('%s', updated) FROM sessions;"
+  "SELECT type, started, updated FROM sessions;"
 
 let get_sessions ?cb config = 
   query config ?cb:cb [select_sessions]

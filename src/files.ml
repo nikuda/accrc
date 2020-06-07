@@ -52,7 +52,7 @@ let create_cache config =
     begin match row with
     | [| t; s; u; |] -> Printf.printf " %s %s \n" 
         (Utils.Time.to_filename (Option.value t ~default:"") (Option.value s ~default:""))
-        (Option.value u ~default:"")
+        (Utils.Time.to_ms (Option.value u ~default:""))
     | _ -> ()
     end
   in 
